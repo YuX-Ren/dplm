@@ -12,8 +12,8 @@ defaults:
 # this allows you to overwrite only specified parameters
 
 # name of the run determines folder name in logs
-project: "DPLM_300m"
-name: "dplm_300m"
+project: "DPLM_600m"
+name: "dplm_600m"
 
 datamodule:
   max_tokens: 6000
@@ -33,7 +33,7 @@ model:
     modules_to_save: lm_head,esm.embeddings
   net:
     arch_type: esmc
-    name: esmc_300m
+    name: esmc_600m
 
 task:
   _target_: lm/dplm

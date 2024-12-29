@@ -64,7 +64,7 @@ class EsmcForDPLM(nn.Module):
         sequence_id = input_ids != self.tokenizer.pad_token_id
         output = self.esmc(input_ids, sequence_id=sequence_id)
         output = {
-            "sequence_logits": output.sequence_logits,
+            "logits": output.sequence_logits,
             "embeddings": output.embeddings,
             "last_hidden_state": output.hidden_states[-1]
         }
