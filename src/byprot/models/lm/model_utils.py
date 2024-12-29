@@ -4,6 +4,7 @@
 
 
 from byprot.models.lm.esm_dplm import EsmForDPLM
+from byprot.models.lm.esmc_dplm import EsmcForDPLM
 from dataclasses import dataclass, field
 from transformers import AutoModelForMaskedLM, AutoConfig, AutoTokenizer
 import torch
@@ -51,6 +52,8 @@ def get_net(cfg):
     if cfg.net.arch_type == 'esm':
         config = AutoConfig.from_pretrained(f'{cfg.net.name}')
         net = EsmForDPLM(config, dropout=cfg.net.dropout)
+    elif cfg.net.arch_type == 'esmc':
+        net = EsmcForDPLM(cfg)
     # TODO: dplm will support more architectures, such as Llama
     else:
         raise NotImplementedError
