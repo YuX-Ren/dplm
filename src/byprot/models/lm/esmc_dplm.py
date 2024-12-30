@@ -30,7 +30,7 @@ class EsmcForDPLM(nn.Module):
         cfg,
     ):
         super().__init__()
-        self.esmc = ESMC.from_pretrained(cfg.net.name)
+        self.esmc = ESMC.from_pretrained(cfg.net.name,device=torch.device('cpu'))
         tokenizer = EsmSequenceTokenizer()
         token_to_id = {tok: ind for ind, tok in enumerate(SEQUENCE_VOCAB)}
         self.tokenizer = tokenizer
