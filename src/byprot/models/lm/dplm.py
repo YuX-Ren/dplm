@@ -52,7 +52,7 @@ class DiffusionProteinLanguageModel(nn.Module):
             self.net.gradient_checkpointing_enable()
     
     @classmethod
-    def from_pretrained(cls, net_name, cfg_override={}, net_override={}, from_huggingface=True):
+    def from_pretrained(cls, net_name, base=False, cfg_override={}, net_override={}, from_huggingface=True):
         if not from_huggingface:
             # Load model checkpoint from local if you pretrain a DPLM with this repo
             # The net_name should be like:
@@ -61,21 +61,21 @@ class DiffusionProteinLanguageModel(nn.Module):
             from byprot.utils.config import load_yaml_config
             from pathlib import Path
             from collections import OrderedDict
-            
+            print(net_name)
             cfg_path = Path(net_name).parents[1]
             cfg_path = Path(cfg_path, '.hydra', 'config.yaml')
             cfg = load_yaml_config(str(cfg_path)).model
             cfg.net.pretrain = False
             cfg.pop('_target_')
             model = cls(cfg)
-            
-            pretrained_state_dict = torch.load(net_name, map_location=torch.device("cpu"))['state_dict']
-            new_pretrained_state_dict = OrderedDict()
-            
-            # remove the module prefix "model."
-            for k, v in pretrained_state_dict.items():
-                new_pretrained_state_dict[k[6:]] = v
-            model.load_state_dict(new_pretrained_state_dict, strict=False) 
+            if not base:
+                print("Loading checkpoint from local")
+                pretrained_state_dict = torch.load(net_name, map_location=torch.device("cpu"))['state_dict']
+                new_pretrained_state_dict = OrderedDict()
+                # remove the module prefix "model."
+                for k, v in pretrained_state_dict.items():
+                    new_pretrained_state_dict[k[6:]] = v
+                model.load_state_dict(new_pretrained_state_dict, strict=False) 
             return model
         else:
             # Load DPLM model checkpoint from huggingface
@@ -292,7 +292,7 @@ class DiffusionProteinLanguageModel(nn.Module):
             step=step + 1,
             max_step=max_step,
             history=history,
-            hidden_states=net_out['last_hidden_state']
+            # hidden_states=net_out['last_hidden_state']
         )
 
     def get_non_special_sym_mask(self, output_tokens, partial_masks=None):

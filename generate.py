@@ -62,7 +62,7 @@ def get_initial(args, length, tokenizer, device):
 
 
 def generate(args):
-    model = DiffusionProteinLanguageModel.from_pretrained(args.model_name)
+    model = DiffusionProteinLanguageModel.from_pretrained(args.model_name, base=args.base, from_huggingface=args.from_huggingface)
     tokenizer = model.tokenizer
     model = model.eval()
     model = model.cuda(); 
@@ -113,6 +113,9 @@ def main():
     # --cond_seq ALVE EME
     parser.add_argument('--cond_position', nargs='*', type=str)
     parser.add_argument('--cond_seq', nargs='*', type=str)
+    ### --base means whether to use base model
+    parser.add_argument('--base', action='store_true')
+    parser.add_argument('--from_huggingface', action='store_true')
     args = parser.parse_args()
         
     generate(args)

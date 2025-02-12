@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from byprot.models import register_model
 from tqdm import tqdm
-from esm.models.esmc import ESMC
+# from esm.models.esmc import ESMC
 import math
 
 from esm.tokenization import EsmSequenceTokenizer
@@ -13,6 +13,9 @@ SEQUENCE_VOCAB = [
     "O", ".", "-", "|",
     "<mask>",
 ]
+
+# for faesm
+from faesm.esmc import ESMC
 
 @register_model('mlm_esmc')
 class EsmcForDPLM(nn.Module):
@@ -31,6 +34,14 @@ class EsmcForDPLM(nn.Module):
     ):
         super().__init__()
         self.esmc = ESMC.from_pretrained(cfg.net.name,device=torch.device('cpu'))
+        # for test  36	1152	18
+        # self.esmc = ESMC(
+        #     d_model=1152,
+        #     n_heads=18,
+        #     n_layers=36,
+        #     tokenizer=EsmSequenceTokenizer(),
+        #     use_flash_attn=True,
+        # ).eval()
         tokenizer = EsmSequenceTokenizer()
         token_to_id = {tok: ind for ind, tok in enumerate(SEQUENCE_VOCAB)}
         self.tokenizer = tokenizer
@@ -66,7 +77,7 @@ class EsmcForDPLM(nn.Module):
         output = {
             "logits": output.sequence_logits,
             "embeddings": output.embeddings,
-            "last_hidden_state": output.hidden_states[-1]
+            # "last_hidden_state": output.hidden_states[-1]
         }
         return output
    
